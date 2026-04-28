@@ -151,21 +151,26 @@ const SelectionDashboard = () => {
   };
 
   const highRiskStudents = useMemo(
-    () => students.filter((student) => getRiskLevel(student) === 'High'),
-    [students]
-  );
+  () => students.filter((student) => getRiskLevel(student) === 'High'),
+  [students, getRiskLevel] // ✅ FIXED
+);
 
-  const highRiskByCourseYear = useMemo(() => {
-    const grouped = {};
-    highRiskStudents.forEach((student) => {
-      const key = `${student.course}__${student.year}`;
-      if (!grouped[key]) {
-        grouped[key] = {
-          course: student.course,
-          year: student.year,
-          students: [],
-        };
-      }
+const highRiskByCourseYear = useMemo(() => {
+  const grouped = {};
+  highRiskStudents.forEach((student) => {
+    const key = `${student.course}__${student.year}`;
+    if (!grouped[key]) {
+      grouped[key] = {
+        course: student.course,
+        year: student.year,
+        students: [],
+      };
+    }
+    grouped[key].students.push(student);
+  });
+
+  return grouped;
+}, [highRiskStudents]);
       grouped[key].students.push(student);
     });
 
